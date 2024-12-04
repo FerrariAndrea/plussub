@@ -1,5 +1,4 @@
 import mutation from './mutation.gql';
-import { client } from '@/apolloClient';
 
 export interface Payload {
   source: 'file'  | 'search-for-movie' | 'search-for-series' | 'legacy-search';
@@ -7,12 +6,12 @@ export interface Payload {
 }
 
 export const trackMutation = async ({source, language}: Payload): Promise<unknown> => {
-  return client.mutate({
+  return {
     mutation,
     variables: {
       origin: window.location.origin,
       source,
       language
     }
-  });
+  }
 };
