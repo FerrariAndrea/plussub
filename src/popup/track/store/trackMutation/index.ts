@@ -6,13 +6,33 @@ export interface Payload {
   language: string;
 }
 
+
 export const trackMutation = async ({source, language}: Payload): Promise<unknown> => {
-  return client.mutate({
+  const _client = client.getClient()
+  // probably this fallback maybe is not correct (but seems not to be a problem)
+  const fallback = {
     mutation,
     variables: {
       origin: window.location.origin,
       source,
       language
     }
-  });
+  }
+  if(_client===null){    
+    return fallback
+  }else{
+    try{
+      return _client.mutate({
+        mutation,
+        variables: {
+          origin: window.location.origin,
+          source,
+          language
+        }
+      });
+    }catch(err){
+      console.warn("trackMutation fail: ",err.message)
+      return fallback
+    }
+  }
 };
